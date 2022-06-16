@@ -1,20 +1,21 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
-using WeatherApp;
+using WeatherApp.Model;
+using WeatherApp.Services;
 
 using var client = new HttpClient();
 WeatherInTheCity? weather;
 string content;
 string path;
 
-using(StreamReader sr = new StreamReader(@"..\..\..\Configurations\StoreagePath.json"))
+using(StreamReader sr = new StreamReader(@"..\..\..\Configurations\appsettings.json"))
 {
     path = new Regex(@"(?<=""storagePath"": "").*(?="")").Match(sr.ReadToEnd()).Groups[0].ToString();
 }
 
 try
 {
-    content = await new RequestsSender(client).GetStringAsync("Vilnius");
+    content = await new HttpClientService(client).GetStringAsync("Vilnius");
     weather = JsonSerializer.Deserialize<WeatherInTheCity>(content);
 
     if (weather != null)
@@ -35,5 +36,4 @@ finally
 {
     client.Dispose();
 }
-
 Console.Read();
