@@ -5,7 +5,13 @@ using WeatherApp;
 using var client = new HttpClient();
 WeatherInTheCity? weather;
 string content;
-var path = new Regex(@"(?<=""storagePath"": "").*?(?="")").Match(new StreamReader(@"..\..\..\Configurations\StoreagePath.json").ReadToEnd()).Groups[0].ToString();
+string path;
+
+using(StreamReader sr = new StreamReader(@"..\..\..\Configurations\StoreagePath.json"))
+{
+    path = new Regex(@"(?<=""storagePath"": "").*?(?="")").Match(sr.ReadToEnd()).Groups[0].ToString();
+}
+
 try
 {
     content = await new RequestsSender(client).GetStringAsync("Vilnius");
