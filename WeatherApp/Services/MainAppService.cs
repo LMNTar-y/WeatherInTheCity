@@ -1,4 +1,5 @@
 ﻿
+using System.Text.Json;
 using WeatherApp.Model;
 
 namespace WeatherApp.Services
@@ -7,6 +8,7 @@ namespace WeatherApp.Services
     {
         private readonly IHttpClientService _httpClientService;
         private readonly IFileStorageService _fileStorageService;
+        private readonly string city = "Vilnius";
 
         public MainAppService(IHttpClientService httpClientService, IFileStorageService fileStorageService)
         {
@@ -14,8 +16,13 @@ namespace WeatherApp.Services
             _fileStorageService = fileStorageService;
         }
 
-        public async Task<string> GetStringAsync(string city) => await _httpClientService.GetStringAsync(city);
-        public async Task SaveAsync(WeatherInTheCity weather) => await _fileStorageService.SaveAsync(weather);
+        public async Task Run()
+        {
+            string content = await _httpClientService.GetStringAsync(city);
+            WeatherInTheCity weather = JsonSerializer.Deserialize<WeatherInTheCity>(content);
+            Console.WriteLine("{0} TEMPERATURE: {1} °C", weather?.CityName?.ToUpper(), weather?.Temp?.CurrentTemp);
+            await _fileStorageService.SaveAsync(weather);
+        }
 
     }
 }
