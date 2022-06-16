@@ -9,7 +9,7 @@ string path;
 
 using(StreamReader sr = new StreamReader(@"..\..\..\Configurations\StoreagePath.json"))
 {
-    path = new Regex(@"(?<=""storagePath"": "").*?(?="")").Match(sr.ReadToEnd()).Groups[0].ToString();
+    path = new Regex(@"(?<=""storagePath"": "").*(?="")").Match(sr.ReadToEnd()).Groups[0].ToString();
 }
 
 try
