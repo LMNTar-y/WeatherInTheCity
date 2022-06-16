@@ -3,7 +3,7 @@ using WeatherApp.Model;
 
 namespace WeatherApp.Services
 {
-    internal class MainAppService
+    public class MainAppService : IMainAppService
     {
         private readonly IHttpClientService _httpClientService;
         private readonly IFileStorageService _fileStorageService;
