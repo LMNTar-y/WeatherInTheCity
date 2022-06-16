@@ -18,7 +18,7 @@ static void ConfigureServices(IServiceCollection services)
     // build config
     var configuration = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile(@"D:\C#\projects\WeatherApp\WeatherApp\Configurations\appsettings.json", optional: false)
+        .AddJsonFile("appsettings.json", false)
         .AddEnvironmentVariables()
         .Build();
 
