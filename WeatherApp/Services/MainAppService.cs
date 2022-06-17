@@ -19,10 +19,22 @@ namespace WeatherApp.Services
         public async Task Run()
         {
             string content = await _httpClientService.GetStringAsync(city);
-            WeatherInTheCity weather = JsonSerializer.Deserialize<WeatherInTheCity>(content);
-            Console.WriteLine("{0} TEMPERATURE: {1} °C", weather?.CityName?.ToUpper(), weather?.Temp?.CurrentTemp);
-            await _fileStorageService.SaveAsync(weather);
-        }
+            WeatherInTheCity? weather;
+            try
+            {
+                weather = JsonSerializer.Deserialize<WeatherInTheCity>(content);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
 
+            Console.WriteLine("{0} TEMPERATURE: {1} °C", weather?.CityName?.ToUpper(), weather?.Temp?.CurrentTemp);
+            if (weather != null)
+            {
+                await _fileStorageService.SaveAsync(weather);
+            }
+        }
     }
 }
