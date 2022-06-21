@@ -6,34 +6,40 @@ namespace WeatherApp.Services
 {
     public class MainAppService : IMainAppService
     {
-        private readonly IHttpClientService _httpClientService;
+        private readonly IWeatherRecieverService _weatherRecieverService;
         private readonly IFileStorageService _fileStorageService;
         private readonly string city = "Vilnius";
 
-        public MainAppService(IHttpClientService httpClientService, IFileStorageService fileStorageService)
+        public MainAppService(IWeatherRecieverService weatherRecieverService, IFileStorageService fileStorageService)
         {
-            _httpClientService = httpClientService;
+            _weatherRecieverService = weatherRecieverService;
             _fileStorageService = fileStorageService;
         }
 
         public async Task Run()
         {
-            string content = await _httpClientService.GetStringAsync(city);
             WeatherInTheCity? weather;
             try
             {
-                weather = JsonSerializer.Deserialize<WeatherInTheCity>(content);
+                weather = await _weatherRecieverService.GetWeatherAsync(city);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
             }
-
-            Console.WriteLine("{0} TEMPERATURE: {1} °C", weather?.CityName?.ToUpper(), weather?.Temp?.CurrentTemp);
-            if (weather != null)
+            
+            if (weather == null || weather.CityName == null || weather.Temp == null)
             {
-                await _fileStorageService.SaveAsync(weather);
+                Console.WriteLine("Weather is not found");
+            }
+            else
+            {
+                Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName.ToUpper(), weather.Temp.CurrentTemp);
+                if (weather != null)
+                {
+                    await _fileStorageService.SaveAsync(weather);
+                }
             }
         }
     }

@@ -20,10 +20,10 @@ namespace WeatherApp
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<IFileStorageService, FileStorageService>()
-                    .AddSingleton<IHttpClientService, HttpClientService>()
+                    .AddSingleton<IWeatherRecieverService, WeatherRecieverService>()
                     .AddSingleton<IMainAppService, MainAppService>()
                     .AddTransient<HttpClient>();
-                    services.Configure<PathToFileConfig>(context.Configuration.GetSection("PathToFileConfig"));
+                    services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
                 });
 
             return hostBuilder;
