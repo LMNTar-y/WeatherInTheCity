@@ -1,6 +1,6 @@
-﻿using WeatherApp.Services;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using WeatherApp;
+using WeatherApp.Business.Services;
 
 var host = Startup.CreateHostBuilder(args).Build();
 

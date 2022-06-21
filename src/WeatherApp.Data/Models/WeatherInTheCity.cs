@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WeatherApp.Model
+namespace WeatherApp.Data.Model
 {
     public class WeatherInTheCity
     {

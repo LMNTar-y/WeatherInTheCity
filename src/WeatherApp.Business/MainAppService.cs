@@ -1,8 +1,7 @@
-﻿
-using System.Text.Json;
-using WeatherApp.Model;
+﻿using WeatherApp.Data.Model;
+using WeatherApp.Data.Services;
 
-namespace WeatherApp.Services
+namespace WeatherApp.Business.Services
 {
     public class MainAppService : IMainAppService
     {
