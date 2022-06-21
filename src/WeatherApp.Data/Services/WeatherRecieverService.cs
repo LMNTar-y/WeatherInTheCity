@@ -6,18 +6,22 @@ namespace WeatherApp.Data.Services
 {
     public class WeatherRecieverService : IWeatherRecieverService
     {
-        private readonly HttpClient _client;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly PathToFileConfig _configurations;
 
-        public WeatherRecieverService(HttpClient client, IOptions<PathToFileConfig> configurations)
+        public WeatherRecieverService(IHttpClientFactory httpClientFactory, IOptions<PathToFileConfig> configurations)
         {
-            _client = client;
-            if (configurations.Value.Url != null)
-                _client.BaseAddress = new Uri(configurations.Value.Url ?? throw new ArgumentNullException(nameof(configurations), "Incorrect data in the url section in the appsettings.json"));
+            _httpClientFactory = httpClientFactory;
+            _configurations = configurations.Value;
         }
 
         public async Task<WeatherInTheCity> GetWeatherAsync(string city)
         {
-            var responce = await _client.SendAsync(new HttpRequestMessage(HttpMethod.Get, _client.BaseAddress + $"&q={city}"));
+            var httpClient = _httpClientFactory.CreateClient();
+            if (_configurations.Url != null)
+                httpClient.BaseAddress = new Uri(_configurations.Url ?? throw new ArgumentNullException(nameof(city), "Incorrect data in the url section in the appsettings.json"));
+
+            var responce = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress + $"&q={city}"));
             if (!responce.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"Server responce StatusCode: {responce.StatusCode}", nameof(city));

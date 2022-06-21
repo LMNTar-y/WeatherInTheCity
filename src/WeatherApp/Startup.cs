@@ -22,9 +22,9 @@ namespace WeatherApp
                 {
                     services.AddSingleton<IFileStorageService, FileStorageService>()
                        .AddSingleton<IWeatherRecieverService, WeatherRecieverService>()
-                       .AddSingleton<IMainAppService, MainAppService>()
-                       .AddTransient<HttpClient>();
+                       .AddSingleton<IMainAppService, MainAppService>();
                     services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
+                    services.AddHttpClient();
                 });
 
             return hostBuilder;
