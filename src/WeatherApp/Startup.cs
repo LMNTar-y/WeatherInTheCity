@@ -7,27 +7,7 @@ using Microsoft.Extensions.Hosting;
 namespace WeatherApp
 {
     public class Startup
-    {
-        #region Region FirstVersion
-        //public void ConfigureServices(IServiceCollection services)
-        //{
-        //    // build config
-        //    var configuration = new ConfigurationBuilder()
-        //        .SetBasePath(Directory.GetCurrentDirectory())
-        //        .AddJsonFile("appsettings.json", false)
-        //        .AddEnvironmentVariables()
-        //        .Build();
-
-        //    services.Configure<PathToFileConfig>(configuration.GetSection("PathToFileConfig"));
-
-        //    // add services:
-        //    services.AddSingleton<IFileStorageService, FileStorageService>()
-        //    .AddSingleton<IHttpClientService, HttpClientService>()
-        //    .AddSingleton<IMainAppService, MainAppService>()
-        //    .AddTransient<HttpClient>();
-        //}
-        #endregion
-
+    {     
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var hostBuilder = Host.CreateDefaultBuilder(args)
@@ -49,6 +29,4 @@ namespace WeatherApp
             return hostBuilder;
         }
     }
-
-
 }
