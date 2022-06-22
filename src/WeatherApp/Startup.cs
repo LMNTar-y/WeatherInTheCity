@@ -4,6 +4,8 @@ using WeatherApp.Business.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace WeatherApp
 {
@@ -22,7 +24,14 @@ namespace WeatherApp
                 {
                     services.AddSingleton<IFileStorageService, FileStorageService>()
                        .AddSingleton<IWeatherRecieverService, WeatherRecieverService>()
-                       .AddSingleton<IReceiveAndSaveService, ReceiveAndSaveService>();
+                       .AddSingleton<IReceiveAndSaveService, ReceiveAndSaveService>()
+                       .AddLogging(loggingBuilder =>
+                       {
+                           // configure Logging with NLog
+                           loggingBuilder.ClearProviders();
+                           loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                           loggingBuilder.AddNLog();
+                       });
                     services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
                     services.AddHttpClient();
                 });

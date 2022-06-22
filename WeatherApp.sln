@@ -5,9 +5,9 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherApp", "src\WeatherApp\WeatherApp.csproj", "{AE3C8AC4-A49D-4849-BDBB-E6B1D531D504}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherApp.Business", "src\WeatherApp.Business\WeatherApp.Business.csproj", "{767063DD-AA4A-461C-B49A-E8A5D5B75F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherApp.Business", "src\WeatherApp.Business\WeatherApp.Business.csproj", "{767063DD-AA4A-461C-B49A-E8A5D5B75F4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherApp.Data", "src\WeatherApp.Data\WeatherApp.Data.csproj", "{48D6E196-5B6D-492D-9CA1-7C422757922D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherApp.Data", "src\WeatherApp.Data\WeatherApp.Data.csproj", "{48D6E196-5B6D-492D-9CA1-7C422757922D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

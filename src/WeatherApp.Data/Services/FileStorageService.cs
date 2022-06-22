@@ -32,7 +32,7 @@ namespace WeatherApp.Data.Services
             }
             else
             {
-                Console.WriteLine("Storagepass in appsettings is null");
+                throw new ArgumentNullException(nameof(weather), "Storagepass in appsettings is null");
             }
         }
     }
