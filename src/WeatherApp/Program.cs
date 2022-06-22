@@ -4,5 +4,5 @@ using WeatherApp.Business.Services;
 
 var host = Startup.CreateHostBuilder(args).Build();
 
-host.Services.GetService<IMainAppService>().Run();
+host.Services.GetService<IReceiveAndSaveService>().Run();
 Console.Read();

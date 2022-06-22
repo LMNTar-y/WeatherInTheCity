@@ -3,13 +3,13 @@ using WeatherApp.Data.Services;
 
 namespace WeatherApp.Business.Services
 {
-    public class MainAppService : IMainAppService
+    public class ReceiveAndSaveService : IReceiveAndSaveService
     {
         private readonly IWeatherRecieverService _weatherRecieverService;
         private readonly IFileStorageService _fileStorageService;
         private readonly string city = "Vilnius";
 
-        public MainAppService(IWeatherRecieverService weatherRecieverService, IFileStorageService fileStorageService)
+        public ReceiveAndSaveService(IWeatherRecieverService weatherRecieverService, IFileStorageService fileStorageService)
         {
             _weatherRecieverService = weatherRecieverService;
             _fileStorageService = fileStorageService;
@@ -35,10 +35,7 @@ namespace WeatherApp.Business.Services
             else
             {
                 Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName.ToUpper(), weather.Temp.CurrentTemp);
-                if (weather != null)
-                {
-                    await _fileStorageService.SaveAsync(weather);
-                }
+                await _fileStorageService.SaveAsync(weather);                
             }
         }
     }

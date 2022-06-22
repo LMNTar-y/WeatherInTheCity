@@ -1,6 +1,6 @@
 ﻿namespace WeatherApp.Business.Services
 {
-    public interface IMainAppService
+    public interface IReceiveAndSaveService
     {
         Task Run();
     }
