@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using WeatherApp.Data.Model;
 
@@ -7,10 +8,12 @@ namespace WeatherApp.Data.Services
     public class FileStorageService : IFileStorageService
     {
         private readonly PathToFileConfig _configurations;
+        private readonly ILogger<FileStorageService> _logger;
 
-        public FileStorageService(IOptions<PathToFileConfig> configurations)
+        public FileStorageService(IOptions<PathToFileConfig> configurations, ILogger<FileStorageService> logger)
         {
             _configurations = configurations.Value;
+            _logger = logger;
         }
 
         public async Task SaveAsync(WeatherInTheCity weather)
@@ -26,6 +29,7 @@ namespace WeatherApp.Data.Services
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Error with the serialisation data from the Weater object and saving it to the file- {Adress}", ex.ToString());
                     Console.WriteLine(ex.Message);
                     throw;
                 }
