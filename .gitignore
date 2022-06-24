@@ -349,5 +349,9 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# publish folder
+# publish and logs folders
 publish/
+logs/
+
+# result json file
+weatherapp-result.json
