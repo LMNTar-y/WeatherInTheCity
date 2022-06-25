@@ -6,14 +6,16 @@ namespace WeatherApp.Business.Services
 {
     public class ReceiveAndSaveService : IReceiveAndSaveService
     {
-        private readonly IWeatherRecieverService _weatherRecieverService;
+        private readonly IWeatherReceiverService _weatherReceiverService;
         private readonly IFileStorageService _fileStorageService;
         private readonly string city = "Vilnius";
         private readonly ILogger<IReceiveAndSaveService> _logger;
 
-        public ReceiveAndSaveService(IWeatherRecieverService weatherRecieverService, IFileStorageService fileStorageService, ILogger<IReceiveAndSaveService> logger)
+        public ReceiveAndSaveService(IWeatherReceiverService weatherReceiverService, 
+            IFileStorageService fileStorageService, 
+            ILogger<IReceiveAndSaveService> logger)
         {
-            _weatherRecieverService = weatherRecieverService;
+            _weatherReceiverService = weatherReceiverService;
             _fileStorageService = fileStorageService;
             _logger = logger;
         }
@@ -25,11 +27,11 @@ namespace WeatherApp.Business.Services
             try
             {
                 _logger.LogTrace("Attempt to connect to weather API to get a weather object");
-                weather = await _weatherRecieverService.GetWeatherAsync(city);
+                weather = await _weatherReceiverService.GetWeatherAsync(city);
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, "Connection was not established - {Adress}", ex.ToString());
+                _logger.LogCritical(ex, "Connection was not established - {Adress}", ex.StackTrace);
                 return;
             }
 
@@ -49,7 +51,7 @@ namespace WeatherApp.Business.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Weather info was not saved a file - {Adress}", ex.StackTrace);
+                    _logger.LogError(ex, "Weather info was not saved in a file - {Adress}", ex.StackTrace);
                 }
             
             }

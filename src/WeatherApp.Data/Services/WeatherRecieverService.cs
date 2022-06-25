@@ -6,13 +6,15 @@ using WeatherApp.Data.Model;
 
 namespace WeatherApp.Data.Services
 {
-    public class WeatherRecieverService : IWeatherRecieverService
+    public class WeatherReceiverService : IWeatherReceiverService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly PathToFileConfig _configurations;
-        private readonly ILogger<WeatherRecieverService> _logger;
+        private readonly ILogger<WeatherReceiverService> _logger;
 
-        public WeatherRecieverService(IHttpClientFactory httpClientFactory, IOptions<PathToFileConfig> configurations, ILogger<WeatherRecieverService> logger)
+        public WeatherReceiverService(IHttpClientFactory httpClientFactory, 
+            IOptions<PathToFileConfig> configurations, 
+            ILogger<WeatherReceiverService> logger)
         {
             _httpClientFactory = httpClientFactory;
             _configurations = configurations.Value;
@@ -23,12 +25,14 @@ namespace WeatherApp.Data.Services
         {
             var httpClient = _httpClientFactory.CreateClient();
             if (_configurations.Url != null)
-                httpClient.BaseAddress = new Uri(_configurations.Url ?? throw new ArgumentNullException(nameof(city), "Incorrect data in the url section in the appsettings.json"));
+                httpClient.BaseAddress = new Uri(_configurations.Url ?? throw new ArgumentNullException(nameof(city), 
+                    "Incorrect data in the url section in the appsettings.json"));
 
             HttpResponseMessage responce;
             try
             {
-                responce = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress + $"&q={city}"));
+                responce = await httpClient.SendAsync(
+                    new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress + $"&q={city}"));
             }
             catch (Exception ex)
             {
@@ -39,14 +43,18 @@ namespace WeatherApp.Data.Services
             switch (responce.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
-                    throw new ArgumentException($"{responce.StatusCode} - The server cannot or will not process the request due to an apparent client error", nameof(city));
+                    throw new ArgumentException($"{responce.StatusCode}" +
+                        $" - The server cannot or will not process the request due to an apparent client error", nameof(city));
                 case HttpStatusCode.Forbidden:
-                    throw new ArgumentException($"{responce.StatusCode} - The request contained valid data and was understood by the server, but the server is refusing action. " +
+                    throw new ArgumentException($"{responce.StatusCode}" +
+                        $" - The request contained valid data and was understood by the server, but the server is refusing action. " +
                         $"Possible because of the lack of permissions", nameof(city));
                 case HttpStatusCode.InternalServerError:
                     throw new ArgumentException($"{responce.StatusCode} - Unexpected condition was encountered", nameof(city));                    
                 case HttpStatusCode.NotFound:
-                    throw new ArgumentException($"{responce.StatusCode} - The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.", nameof(city));
+                    throw new ArgumentException($"{responce.StatusCode}" +
+                        $" - The requested resource could not be found but may be available in the future. " +
+                        $"Subsequent requests by the client are permissible.", nameof(city));
             }
 
             if (!responce.IsSuccessStatusCode || responce == null)
@@ -62,7 +70,8 @@ namespace WeatherApp.Data.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error with the deserialisation data from the server to the Weater object - {Adress}", ex.ToString());
+                _logger.LogError(ex, "Error with the deserialization data from the server to the Weather object - {Adress}", 
+                    ex.ToString());
                 throw;
             }
 

@@ -6,6 +6,7 @@ namespace WeatherApp.Data.Model
     {
         [JsonPropertyName("storagePath")]
         public string? StoragePath { get; set; }
+
         [JsonPropertyName("url")]
         public string? Url { get; set; }
     }

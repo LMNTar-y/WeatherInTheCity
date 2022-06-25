@@ -10,7 +10,8 @@ namespace WeatherApp.Data.Services
         private readonly PathToFileConfig _configurations;
         private readonly ILogger<FileStorageService> _logger;
 
-        public FileStorageService(IOptions<PathToFileConfig> configurations, ILogger<FileStorageService> logger)
+        public FileStorageService(IOptions<PathToFileConfig> configurations, 
+            ILogger<FileStorageService> logger)
         {
             _configurations = configurations.Value;
             _logger = logger;
@@ -29,8 +30,9 @@ namespace WeatherApp.Data.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error with the serialisation data from the Weater object and saving it to the file- {Adress}", ex.ToString());
-                    Console.WriteLine(ex.Message);
+                    _logger.LogError(ex, 
+                        "Error with the serialization data from the Weather object and saving it to the file - {Adress}", 
+                        ex.ToString());
                     throw;
                 }
             }

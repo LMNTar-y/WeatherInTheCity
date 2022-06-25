@@ -6,6 +6,7 @@ namespace WeatherApp.Data.Model
     {
         [JsonPropertyName("main")]
         public TempInfo? Temp { get; set; }
+
         [JsonPropertyName("name")]
         public string? CityName { get; set; }
     }

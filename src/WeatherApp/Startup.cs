@@ -23,13 +23,13 @@ namespace WeatherApp
                 .ConfigureServices((context, services) =>
                 {
                     services.AddSingleton<IFileStorageService, FileStorageService>()
-                       .AddSingleton<IWeatherRecieverService, WeatherRecieverService>()
+                       .AddSingleton<IWeatherReceiverService, WeatherReceiverService>()
                        .AddSingleton<IReceiveAndSaveService, ReceiveAndSaveService>()
                        .AddLogging(loggingBuilder =>
                        {
                            // configure Logging with NLog
                            loggingBuilder.ClearProviders();
-                           loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                           loggingBuilder.SetMinimumLevel(LogLevel.Trace);
                            loggingBuilder.AddNLog();
                        });
                     services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
