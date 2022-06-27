@@ -1,4 +1,4 @@
-﻿using WeatherApp.Data.Model;
+﻿using WeatherApp.Data.Models;
 
 namespace WeatherApp.Data.Services
 {

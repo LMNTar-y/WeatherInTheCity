@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text.Json;
-using WeatherApp.Data.Model;
+using WeatherApp.Data.Models;
 
 namespace WeatherApp.Data.Services
 {

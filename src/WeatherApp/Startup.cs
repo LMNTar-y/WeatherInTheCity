@@ -1,4 +1,4 @@
-﻿using WeatherApp.Data.Model;
+﻿using WeatherApp.Data.Models;
 using WeatherApp.Data.Services;
 using WeatherApp.Business.Services;
 using Microsoft.Extensions.DependencyInjection;
