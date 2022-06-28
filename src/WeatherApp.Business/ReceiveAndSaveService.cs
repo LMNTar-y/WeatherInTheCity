@@ -40,6 +40,7 @@ namespace WeatherApp.Business.Services
             if (weather == null || weather.CityName == null || weather.Temp == null)
             {
                 _logger.LogError("One or more weather properties is null");
+                throw new ArgumentNullException(weather?.ToString(), "Weather is null or one of the it's properties is null");
             }
             else
             {

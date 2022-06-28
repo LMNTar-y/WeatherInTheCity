@@ -8,31 +8,26 @@ namespace WeatherApp.Data.Services
 {
     public class WeatherReceiverService : IWeatherReceiverService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly PathToFileConfig _configurations;
         private readonly ILogger<WeatherReceiverService> _logger;
+        private readonly HttpClient _httpClient;
 
-        public WeatherReceiverService(IHttpClientFactory httpClientFactory, 
-            IOptions<PathToFileConfig> configurations, 
+        public WeatherReceiverService(IHttpClientFactory httpClientFactory,
+            IOptions<PathToFileConfig> configurations,
             ILogger<WeatherReceiverService> logger)
         {
-            _httpClientFactory = httpClientFactory;
-            _configurations = configurations.Value;
             _logger = logger;
+            _httpClient = httpClientFactory.CreateClient();
+            _httpClient.BaseAddress = new Uri(configurations.Value.Url ?? throw new ArgumentNullException(nameof(configurations),
+                "Incorrect data in the url section in the appsettings.json"));
         }
 
         public async Task<WeatherInTheCity> GetWeatherAsync(string city)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            if (_configurations.Url != null)
-                httpClient.BaseAddress = new Uri(_configurations.Url ?? throw new ArgumentNullException(nameof(city), 
-                    "Incorrect data in the url section in the appsettings.json"));
-
             HttpResponseMessage responce;
             try
             {
-                responce = await httpClient.SendAsync(
-                    new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress + $"&q={city}"));
+                responce = await _httpClient.SendAsync(
+                    new HttpRequestMessage(HttpMethod.Get, _httpClient.BaseAddress + $"&q={city}"));
             }
             catch (Exception ex)
             {
@@ -50,7 +45,7 @@ namespace WeatherApp.Data.Services
                         $" - The request contained valid data and was understood by the server, but the server is refusing action. " +
                         $"Possible because of the lack of permissions", nameof(city));
                 case HttpStatusCode.InternalServerError:
-                    throw new ArgumentException($"{responce.StatusCode} - Unexpected condition was encountered", nameof(city));                    
+                    throw new ArgumentException($"{responce.StatusCode} - Unexpected condition was encountered", nameof(city));
                 case HttpStatusCode.NotFound:
                     throw new ArgumentException($"{responce.StatusCode}" +
                         $" - The requested resource could not be found but may be available in the future. " +
@@ -70,12 +65,12 @@ namespace WeatherApp.Data.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error with the deserialization data from the server to the Weather object - {Adress}", 
+                _logger.LogError(ex, "Error with the deserialization data from the server to the Weather object - {Adress}",
                     ex.ToString());
                 throw;
             }
 
-            return weather;
+            return weather ?? throw new ArgumentNullException(nameof(city), "Weather cannot be null");
         }
     }
 }

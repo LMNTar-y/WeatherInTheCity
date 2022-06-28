@@ -24,10 +24,8 @@ namespace WeatherApp.Data.Services
             {
                 try
                 {
-                    using (StreamWriter sw = new StreamWriter(_configurations.StoragePath, false))
-                    {
-                        await sw.WriteAsync(JsonSerializer.Serialize(weather));
-                    }
+                    await using StreamWriter sw = new StreamWriter(_configurations.StoragePath, false);
+                    await sw.WriteAsync(JsonSerializer.Serialize(weather));
                 }
                 catch (Exception ex)
                 {
@@ -39,7 +37,7 @@ namespace WeatherApp.Data.Services
             }
             else
             {
-                throw new ArgumentNullException(nameof(weather), "Storagepass in appsettings is null");
+                throw new ArgumentNullException(nameof(weather), "The storagepass in the appsettings file is null");
             }
         }
     }

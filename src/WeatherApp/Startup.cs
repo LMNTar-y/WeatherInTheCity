@@ -9,7 +9,7 @@ using NLog.Extensions.Logging;
 
 namespace WeatherApp
 {
-    public class Startup
+    public static class Startup
     {
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
