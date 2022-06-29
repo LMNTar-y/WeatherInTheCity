@@ -16,7 +16,7 @@ namespace WeatherApp.Data.Services
             ILogger<WeatherReceiverService> logger)
         {
             _logger = logger;
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpClientFactory.CreateClient("WeatherApp");
             _httpClient.BaseAddress = new Uri(configurations.Value.Url ?? throw new ArgumentNullException(nameof(configurations),
                 "Incorrect data in the url section in the appsettings.json"));
         }

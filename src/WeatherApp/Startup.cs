@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Polly;
 
 namespace WeatherApp
 {
@@ -33,7 +34,14 @@ namespace WeatherApp
                            loggingBuilder.AddNLog();
                        });
                     services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
-                    services.AddHttpClient();
+                    services.AddHttpClient("WeatherApp")
+                        .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(5, retryAttempt =>
+                            TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + 
+                            TimeSpan.FromMilliseconds(new Random().Next(0, 1000))))
+                        .AddTransientHttpErrorPolicy(builder => builder.CircuitBreakerAsync(
+                            handledEventsAllowedBeforeBreaking: 3,
+                            durationOfBreak: TimeSpan.FromSeconds(30)
+                        ));
                 });
 
             return hostBuilder;

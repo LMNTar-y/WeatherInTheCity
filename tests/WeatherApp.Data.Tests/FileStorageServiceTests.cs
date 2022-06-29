@@ -3,11 +3,16 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 using WeatherApp.Data.Models;
 using WeatherApp.Data.Services;
+using Moq;
 
 namespace WeatherApp.Data.Tests
 {
     public class FileStorageServiceTests
     {
+        private FileStorageService _sut;
+        private readonly Mock<ILogger<FileStorageService>> _loggerMock = new Mock<ILogger<FileStorageService>>();
+        private readonly Mock<IOptions<PathToFileConfig>> _configurationsMock = new Mock<IOptions<PathToFileConfig>>();
+
         private readonly WeatherInTheCity _weather = new()
         { CityName = "Vilnius", Temp = new TempInfo() { CurrentTemp = 22.22 } };
 
@@ -16,41 +21,40 @@ namespace WeatherApp.Data.Tests
         public async Task SaveAsync_StoragePassIsNull_ThrowsArgumentNullException()
         {
             //arrange
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = null };
+            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
 
-            FileStorageService fileStorageService =
-                new FileStorageService(
-                    new OptionsWrapper<PathToFileConfig>(new PathToFileConfig() { StoragePath = null }),
-                    new Logger<FileStorageService>(new LoggerFactory()));
+            _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
 
             //act
             //assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => fileStorageService.SaveAsync(_weather));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => _sut.SaveAsync(_weather));
         }
 
         [Fact]
         public async Task SaveAsync_StoragePassIsEmpty_ThrowsArgumentException()
         {
             //arrange
-            FileStorageService fileStorageService =
-                new FileStorageService(
-                    new OptionsWrapper<PathToFileConfig>(new PathToFileConfig() { StoragePath = string.Empty }),
-                    new Logger<FileStorageService>(new LoggerFactory()));
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = string.Empty };
+            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
+
+            _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
             //act
             //assert
-            await Assert.ThrowsAsync<ArgumentException>(() => fileStorageService.SaveAsync(_weather));
+            await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveAsync(_weather));
         }
 
         [Fact]
         public async Task SaveAsync_StorageFolderDoesNotExists_ThrowsArgumentException()
         {
             //arrange
-            FileStorageService fileStorageService =
-                new FileStorageService(
-                    new OptionsWrapper<PathToFileConfig>(new PathToFileConfig() { StoragePath = "Randomname/weatherapp-test-result.json" }),
-                    new Logger<FileStorageService>(new LoggerFactory()));
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = "Randomname/weatherapp-test-result.json" };
+            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
+
+            _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
             //act
             //assert
-            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => fileStorageService.SaveAsync(_weather));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => _sut.SaveAsync(_weather));
         }
 
         [Fact]
@@ -58,12 +62,12 @@ namespace WeatherApp.Data.Tests
         {
             //arrange
             string path = "../weatherapp-test-result.json";
-            FileStorageService fileStorageService =
-                new FileStorageService(
-                    new OptionsWrapper<PathToFileConfig>(new PathToFileConfig() { StoragePath = path }),
-                    new Logger<FileStorageService>(new LoggerFactory()));
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = path };
+            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
+
+            _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
             //act
-            await fileStorageService.SaveAsync(_weather);
+            await _sut.SaveAsync(_weather);
 
             //assert
             Assert.True(File.Exists(path));
