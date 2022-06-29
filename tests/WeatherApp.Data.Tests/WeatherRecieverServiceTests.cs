@@ -31,7 +31,7 @@ namespace WeatherApp.Data.Tests
         [InlineData(HttpStatusCode.LoopDetected)]
         [InlineData(HttpStatusCode.BadGateway)]
         [InlineData(HttpStatusCode.ExpectationFailed)]
-        public async Task GetWeatherAsync_ResponceStatusCodeIsNotSuccess_ThrowsExceptions(object value)
+        public async Task GetWeatherAsync_ResponceStatusCodeIsNotSuccess_ThrowsExceptions(object httpStatusCode)
         {
             //arrange
             IOptions<PathToFileConfig> configurations =
@@ -40,16 +40,16 @@ namespace WeatherApp.Data.Tests
                         Url = "https://test/"
                     });
 
-            var handlerMock = new Mock<HttpMessageHandler>();
-            var responce = new HttpResponseMessage((HttpStatusCode)value);
+            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
+            var responce = new HttpResponseMessage((HttpStatusCode)httpStatusCode);
 
-            handlerMock
+            httpMessageHandlerMock
                .Protected()
                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(),
                     ItExpr.IsAny<CancellationToken>())
                .ReturnsAsync(() => responce);
 
-            _httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(handlerMock.Object));
+            _httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(httpMessageHandlerMock.Object));
 
             _sut = new WeatherReceiverService(_httpClientFactoryMock.Object, configurations, _loggerMock.Object);
 
@@ -90,6 +90,7 @@ namespace WeatherApp.Data.Tests
            var result = await _sut.GetWeatherAsync("dcs");
 
             //accert
+            Assert.NotNull(result);
             Assert.Equal(weather.CityName, result.CityName);
             Assert.Equal(weather.Temp.CurrentTemp, result?.Temp?.CurrentTemp);
         }
