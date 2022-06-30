@@ -2,7 +2,6 @@ using Moq;
 using Microsoft.Extensions.Logging;
 using WeatherApp.Business.Services;
 using WeatherApp.Data.Services;
-using WeatherApp.Data.Models;
 
 namespace WeatherApp.Business.Tests
 {

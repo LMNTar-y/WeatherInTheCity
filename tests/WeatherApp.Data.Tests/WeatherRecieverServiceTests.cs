@@ -10,17 +10,32 @@ namespace WeatherApp.Data.Tests
 {
     public class WeatherRecieverServiceTests
     {
-        private WeatherReceiverService _sut;
+        private WeatherReceiverService? _sut;
         private readonly Mock<IHttpClientFactory> _httpClientFactoryMock = new Mock<IHttpClientFactory>();
         private readonly Mock<ILogger<WeatherReceiverService>> _loggerMock = new Mock<ILogger<WeatherReceiverService>>();
         private readonly Mock<IOptions<PathToFileConfig>> _configurationsMock = new Mock<IOptions<PathToFileConfig>>();
+        private readonly PathToFileConfig pathToFileConfig = new PathToFileConfig();
+        private HttpResponseMessage responce = new HttpResponseMessage(HttpStatusCode.OK);
+
+        public WeatherRecieverServiceTests()
+        {
+            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
+            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
+
+            httpMessageHandlerMock
+               .Protected()
+               .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(),
+                    ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(() => responce);
+
+            _httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(httpMessageHandlerMock.Object));
+        }
 
         [Fact]
         public void Constructor_GetsNullUrlConfigurations_ThrowsArgumentNullException()
         {
             //arrange
-            var pathToFileConfig = new PathToFileConfig() { Url = null };
-            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
+            pathToFileConfig.Url = null;
             
             //act
             //accert            
@@ -38,19 +53,9 @@ namespace WeatherApp.Data.Tests
         public async Task GetWeatherAsync_ResponceStatusCodeIsNotSuccess_ThrowsExceptions(object httpStatusCode)
         {
             //arrange
-            var pathToFileConfig = new PathToFileConfig() { Url = "https://test/" };
-            _configurationsMock.Setup(x => x.Value).Returns(pathToFileConfig);
+            pathToFileConfig.Url = "https://test/" ;
 
-            var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
-            var responce = new HttpResponseMessage((HttpStatusCode)httpStatusCode);
-
-            httpMessageHandlerMock
-               .Protected()
-               .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-               .ReturnsAsync(() => responce);
-
-            _httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(httpMessageHandlerMock.Object));
+            responce = new HttpResponseMessage((HttpStatusCode)httpStatusCode);
 
             _sut = new WeatherReceiverService(_httpClientFactoryMock.Object, _configurationsMock.Object, _loggerMock.Object);
 
@@ -63,24 +68,15 @@ namespace WeatherApp.Data.Tests
         public async Task GetWeatherAsync_GetCorrectResponce_ReturnsResult()
         {
             //arrange
-            var pathToFileConfig = new PathToFileConfig() { Url = "https://test/" };
-            _configurationsMock.Setup(x => x.Value).Returns(pathToFileConfig);
+            pathToFileConfig.Url = "https://test/" ;
 
             var weather = new WeatherInTheCity() { CityName = "Vilnius", Temp = new TempInfo() { CurrentTemp = 16.49 } };
-            var handlerMock = new Mock<HttpMessageHandler>();
-            var responce = new HttpResponseMessage()
+
+            responce = new HttpResponseMessage()
             {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(@"{""main"":{ ""temp"":16.49},""name"":""Vilnius""}")
             };
-
-            handlerMock
-               .Protected()
-               .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-               .ReturnsAsync(() => responce);
-
-            _httpClientFactoryMock.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(handlerMock.Object));
 
             _sut = new WeatherReceiverService(_httpClientFactoryMock.Object, _configurationsMock.Object, _loggerMock.Object);
 

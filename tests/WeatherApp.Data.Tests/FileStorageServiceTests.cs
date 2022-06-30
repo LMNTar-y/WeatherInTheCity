@@ -9,7 +9,7 @@ namespace WeatherApp.Data.Tests
 {
     public class FileStorageServiceTests
     {
-        private FileStorageService _sut;
+        private FileStorageService? _sut;
         private readonly Mock<ILogger<FileStorageService>> _loggerMock = new Mock<ILogger<FileStorageService>>();
         private readonly Mock<IOptions<PathToFileConfig>> _configurationsMock = new Mock<IOptions<PathToFileConfig>>();
 
