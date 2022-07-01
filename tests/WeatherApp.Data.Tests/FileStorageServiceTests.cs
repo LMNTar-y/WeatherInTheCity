@@ -61,7 +61,7 @@ namespace WeatherApp.Data.Tests
         public async Task SaveAsync_StoragePassIsCorrect_TrueIfFileExistsAndTextEqualToTestObject()
         {
             //arrange
-            string path = "../weatherapp-test-result.json";
+            string path = "../weatherapp-result.json";
             var pathToFileConfig = new PathToFileConfig() { StoragePath = path };
             _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
 
