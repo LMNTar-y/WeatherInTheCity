@@ -2,6 +2,7 @@
 The main reason for creating this app is learning
 
 // Below will be a report of what was learned, and it will be in Russian. This file is mainly for personal usage
+
 Второй отчет:
 В течение недели изучал следующее:
 1. Юнит тестирование и moq нугет, добавил юнит тесты в апп использую xUnit
