@@ -28,6 +28,7 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
             var weather = await _weatherReceiverService.GetWeatherAsync(city);
             _logger.LogTrace("The weather object was received");
 
+            _logger.LogTrace("Start checking weather object properties on null");
             if (weather.CityName != null && weather.Temp != null)
             {
                 Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName?.ToUpper(), weather.Temp?.CurrentTemp);
@@ -36,6 +37,14 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
                 await _fileStorageService.SaveAsync(weather);
                 _logger.LogTrace("Saving finished");
             }
+            else
+            {
+                _logger.LogCritical("One or more weather properties is null");
+                throw new ArgumentNullException(weather.CityName, "One or more weather properties is null");
+            }
+
+            _logger.LogTrace(
+                $"Complete checking weather object properties: CityName - {weather.CityName}, Temp - {weather?.Temp?.CurrentTemp}");
         }
         catch (Exception ex)
         {
