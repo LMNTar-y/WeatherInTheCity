@@ -1,4 +1,4 @@
-﻿namespace WeatherApp.Business.Services
+﻿namespace WeatherApp.Business
 {
     public interface IReceiveAndSaveService
     {

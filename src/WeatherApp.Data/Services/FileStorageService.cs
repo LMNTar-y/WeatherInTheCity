@@ -3,42 +3,53 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 using WeatherApp.Data.Models;
 
-namespace WeatherApp.Data.Services
+namespace WeatherApp.Data.Services;
+
+public class FileStorageService : IFileStorageService
 {
-    public class FileStorageService : IFileStorageService
+    private readonly PathToFileConfig _configurations;
+    private readonly ILogger<FileStorageService> _logger;
+
+    public FileStorageService(IOptions<PathToFileConfig> configurations,
+        ILogger<FileStorageService> logger)
     {
+        _configurations = configurations.Value;
+        _logger = logger;
+    }
 
-        private readonly PathToFileConfig _configurations;
-        private readonly ILogger<FileStorageService> _logger;
+    public async Task SaveAsync(WeatherInTheCity weather)
+    {
+        _logger.LogTrace("Start checking StoragePass if it null, empty or whiteSpace");
+        CheckStoragePassIfNullOrWhiteSpaced(_configurations);
+        _logger.LogTrace("Checking completed");
 
-        public FileStorageService(IOptions<PathToFileConfig> configurations,
-            ILogger<FileStorageService> logger)
+        try
         {
-            _configurations = configurations.Value;
-            _logger = logger;
-        }
-
-        public async Task SaveAsync(WeatherInTheCity weather)
-        {
-            if (_configurations.StoragePath != null)
+            if (!string.IsNullOrWhiteSpace(_configurations.StoragePath))
             {
-                try
-                {
-                    await using StreamWriter sw = new StreamWriter(_configurations.StoragePath, false);
-                    await sw.WriteAsync(JsonSerializer.Serialize(weather));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                        "Error with the serialization data from the Weather object and saving it to the file - {Adress}",
-                        ex.ToString());
-                    throw;
-                }
+                _logger.LogTrace("Open streamWriter and start to write info to the file");
+
+                await using var sw = new StreamWriter(_configurations.StoragePath, false);
+                await sw.WriteAsync(JsonSerializer.Serialize(weather));
+
+                _logger.LogTrace("The info has been written successfully");
             }
             else
             {
-                throw new ArgumentNullException(nameof(weather), "The storagepass in the appsettings file is null");
+                _logger.LogCritical("The storagepass in the appsettings file is null, empty or whiteSpace");
             }
         }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex,
+                "Error with the serialization data from the Weather object and saving it to the file - {Adress}",
+                ex.ToString());
+            throw;
+        }
+    }
+    private void CheckStoragePassIfNullOrWhiteSpaced(PathToFileConfig storagePath)
+    {
+        if (string.IsNullOrWhiteSpace(storagePath.StoragePath))
+            throw new ArgumentNullException(nameof(storagePath), "StoragePath cannot be null, empty or whiteSpace");
     }
 }

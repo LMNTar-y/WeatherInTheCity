@@ -17,11 +17,14 @@ namespace WeatherApp.Data.Tests
         { CityName = "Vilnius", Temp = new TempInfo() { CurrentTemp = 22.22 } };
 
 
-        [Fact]
-        public async Task SaveAsync_StoragePassIsNull_ThrowsArgumentNullException()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("    ")]
+        public async Task SaveAsync_StoragePassIsNullOrWhiteSpace_ThrowsArgumentNullException(object storagePath)
         {
             //arrange
-            var pathToFileConfig = new PathToFileConfig() { StoragePath = null };
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = (string) storagePath };
             _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
 
             _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
@@ -32,23 +35,10 @@ namespace WeatherApp.Data.Tests
         }
 
         [Fact]
-        public async Task SaveAsync_StoragePassIsEmpty_ThrowsArgumentException()
+        public async Task SaveAsync_StorageFolderDoesNotExists_DirectoryNotFoundException()
         {
             //arrange
-            var pathToFileConfig = new PathToFileConfig() { StoragePath = string.Empty };
-            _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
-
-            _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
-            //act
-            //assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveAsync(_weather));
-        }
-
-        [Fact]
-        public async Task SaveAsync_StorageFolderDoesNotExists_ThrowsArgumentException()
-        {
-            //arrange
-            var pathToFileConfig = new PathToFileConfig() { StoragePath = "Randomname/weatherapp-test-result.json" };
+            var pathToFileConfig = new PathToFileConfig() { StoragePath = "RandomName/weatherApp-test-result.json" };
             _configurationsMock.Setup(p => p.Value).Returns(pathToFileConfig);
 
             _sut = new FileStorageService(_configurationsMock.Object, _loggerMock.Object);
@@ -72,7 +62,7 @@ namespace WeatherApp.Data.Tests
             //assert
             Assert.True(File.Exists(path));
             string result = JsonSerializer.Serialize(_weather);
-            Assert.Equal(File.ReadAllText(path), result);            
+            Assert.Equal(await File.ReadAllTextAsync(path), result);            
         }
     }
 }
