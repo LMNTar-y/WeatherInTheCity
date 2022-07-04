@@ -28,7 +28,7 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
             var weather = await _weatherReceiverService.GetWeatherAsync(city);
             _logger.LogTrace("The weather object was received");
 
-            if (weather.CityName != null && weather.Temp == null)
+            if (weather.CityName != null && weather.Temp != null)
             {
                 Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName?.ToUpper(), weather.Temp?.CurrentTemp);
 
