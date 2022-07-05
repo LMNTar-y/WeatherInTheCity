@@ -20,12 +20,12 @@ public class FileStorageService : IFileStorageService
     public async Task SaveAsync(WeatherInTheCity weather)
     {
         _logger.LogTrace("Start checking StoragePass if it null, empty or whiteSpace");
-        CheckStoragePassIfNullOrWhiteSpaced(_configurations);
+        if (IfStoragePassIsNullOrWhiteSpaced(_configurations)) return;
         _logger.LogTrace("Checking completed");
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(_configurations.StoragePath))
+            if (!string.IsNullOrWhiteSpace(_configurations?.StoragePath))
             {
                 _logger.LogTrace("Open streamWriter and start to write info to the file");
 
@@ -47,9 +47,12 @@ public class FileStorageService : IFileStorageService
             throw;
         }
     }
-    private void CheckStoragePassIfNullOrWhiteSpaced(PathToFileConfig storagePath)
+
+    private bool IfStoragePassIsNullOrWhiteSpaced(PathToFileConfig storagePath)
     {
-        if (string.IsNullOrWhiteSpace(storagePath.StoragePath))
-            throw new ArgumentNullException(nameof(storagePath), "StoragePath cannot be null, empty or whiteSpace");
+        if (string.IsNullOrWhiteSpace(storagePath?.StoragePath))
+            throw new ArgumentNullException(storagePath?.StoragePath,
+                "StoragePath cannot be null, empty or whiteSpace");
+        return false;
     }
 }

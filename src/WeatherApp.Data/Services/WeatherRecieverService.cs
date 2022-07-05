@@ -19,11 +19,12 @@ public class WeatherReceiverService : IWeatherReceiverService
 
     public async Task<WeatherInTheCity> GetWeatherAsync(string city)
     {
-        _logger.LogTrace("Start checking City parameter if it null, empty or whiteSpace");
-        CheckCityParameterToNullOrWhiteSpaced(city);
-        _logger.LogTrace("Checking completed");
-
-        WeatherInTheCity? weather;
+        WeatherInTheCity? weather = null;
+        if (IfCityParameterIsNullOrWhiteSpaced(city))
+        {
+            _logger.LogCritical("City parameter is null, empty or whiteSpace");
+            return weather;
+        }
 
         try
         {
@@ -40,19 +41,19 @@ public class WeatherReceiverService : IWeatherReceiverService
                 switch (response.StatusCode)
                 {
                     case HttpStatusCode.BadRequest:
-                        _logger.LogCritical("BadRequest - {0}", await response.Content.ReadAsStringAsync());
+                        _logger.LogCritical("BadRequest - {0}", jsonFromResponse);
                         break;
                     case HttpStatusCode.Forbidden:
-                        _logger.LogCritical("Forbidden - {0}", await response.Content.ReadAsStringAsync());
+                        _logger.LogCritical("Forbidden - {0}", jsonFromResponse);
                         break;
                     case HttpStatusCode.InternalServerError:
-                        _logger.LogCritical("InternalServerError - {0}", await response.Content.ReadAsStringAsync());
+                        _logger.LogCritical("InternalServerError - {0}", jsonFromResponse);
                         break;
                     case HttpStatusCode.NotFound:
                         _logger.LogCritical("NotFound - {0}", jsonFromResponse);
                         break;
                     default:
-                        _logger.LogCritical("Other bad status - {0}", await response.Content.ReadAsStringAsync());
+                        _logger.LogCritical("Other bad status - {0}", jsonFromResponse);
                         break;
                 }
 
@@ -69,14 +70,13 @@ public class WeatherReceiverService : IWeatherReceiverService
             throw;
         }
 
-        return weather ?? throw new ArgumentNullException(nameof(city), "Weather cannot be null");
+        return weather;
     }
 
-    private void CheckCityParameterToNullOrWhiteSpaced(string city)
+    private bool IfCityParameterIsNullOrWhiteSpaced(string city)
     {
-        if (!string.IsNullOrWhiteSpace(city)) return;
-        _logger.LogCritical("The city which was put in the method cannot be null, empty or whiteSpace");
-        throw new ArgumentNullException(nameof(city),
-            "The city which was put in the method cannot be null, empty or whiteSpace");
+        if (string.IsNullOrWhiteSpace(city)) return true;
+
+        return false;
     }
 }

@@ -71,15 +71,5 @@ public class WeatherReceiverServiceTests
         Assert.Equal(weather.Temp.CurrentTemp, result.Temp?.CurrentTemp);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("    ")]
-    public async Task GetWeatherAsync_GetIncorrectParameter_ThrowsExceptions(object city)
-    {
-        //arrange
-        //act
-        //assert
-        await Assert.ThrowsAnyAsync<ArgumentNullException>(() => _sut.GetWeatherAsync((string) city));
-    }
+
 }

@@ -1,13 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WeatherApp.Data.Models
-{
-    public class PathToFileConfig
-    {
-        [JsonPropertyName("storagePath")]
-        public string? StoragePath { get; set; }
+namespace WeatherApp.Data.Models;
 
-        [JsonPropertyName("url")]
-        public string? Url { get; set; }
-    }
+public class PathToFileConfig
+{
+    [JsonPropertyName("storagePath")] 
+    public string? StoragePath { get; set; }
 }

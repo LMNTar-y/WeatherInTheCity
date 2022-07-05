@@ -34,13 +34,14 @@ public static class Startup
                         loggingBuilder.AddNLog();
                     });
                 services.Configure<PathToFileConfig>(context.Configuration.GetSection(nameof(PathToFileConfig)));
+                services.Configure<ConnectionSettings>(context.Configuration.GetSection(nameof(ConnectionSettings)));
 
                 var jitterer = new Random();
                 services.AddHttpClient("WeatherApp",
                         c =>
                         {
                             c.BaseAddress = new Uri(context.Configuration[
-                                    $"{nameof(PathToFileConfig)}:{nameof(PathToFileConfig.Url)}"]);
+                                    $"{nameof(ConnectionSettings)}:{nameof(ConnectionSettings.Url)}"]);
                         })
                     .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, retryAttempt =>
                         TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +
