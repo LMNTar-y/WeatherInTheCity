@@ -19,25 +19,18 @@ public class FileStorageService : IFileStorageService
 
     public async Task SaveAsync(WeatherInTheCity weather)
     {
-        _logger.LogTrace("Start checking StoragePass if it null, empty or whiteSpace");
-        if (IfStoragePassIsNullOrWhiteSpaced(_configurations)) return;
-        _logger.LogTrace("Checking completed");
-
         try
         {
-            if (!string.IsNullOrWhiteSpace(_configurations?.StoragePath))
-            {
-                _logger.LogTrace("Open streamWriter and start to write info to the file");
+            _logger.LogTrace("Start checking StoragePass if it null, empty or whiteSpace");
+            var storagePath = GetStoragePassOrThrowException(_configurations);
+            _logger.LogTrace("Checking completed");
 
-                await using var sw = new StreamWriter(_configurations.StoragePath, false);
-                await sw.WriteAsync(JsonSerializer.Serialize(weather));
+            _logger.LogTrace("Open streamWriter and start to write info to the file");
 
-                _logger.LogTrace("The info has been written successfully");
-            }
-            else
-            {
-                _logger.LogCritical("The storagepass in the appsettings file is null, empty or whiteSpace");
-            }
+            await using var sw = new StreamWriter(storagePath, false);
+            await sw.WriteAsync(JsonSerializer.Serialize(weather));
+
+            _logger.LogTrace("The info has been written successfully");
         }
         catch (Exception ex)
         {
@@ -48,11 +41,12 @@ public class FileStorageService : IFileStorageService
         }
     }
 
-    private bool IfStoragePassIsNullOrWhiteSpaced(PathToFileConfig storagePath)
+    private string GetStoragePassOrThrowException(PathToFileConfig configurations)
     {
-        if (string.IsNullOrWhiteSpace(storagePath?.StoragePath))
-            throw new ArgumentNullException(storagePath?.StoragePath,
-                "StoragePath cannot be null, empty or whiteSpace");
-        return false;
+        if (configurations == null || string.IsNullOrWhiteSpace(configurations.StoragePath))
+            throw new ArgumentNullException(nameof(configurations),
+                "PathToFileConfig object cannot be null or its StoragePath property cannot be null, empty or whiteSpace");
+
+        return configurations.StoragePath;
     }
 }

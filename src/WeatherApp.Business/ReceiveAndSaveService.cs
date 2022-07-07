@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using WeatherApp.Data.Models;
 using WeatherApp.Data.Services;
 
 namespace WeatherApp.Business;
@@ -33,7 +32,7 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
             _logger.LogTrace("Start checking weather object properties on null");
             if (!string.IsNullOrWhiteSpace(weather?.CityName) && weather?.Temp != null)
             {
-                Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName?.ToUpper(), weather.Temp?.CurrentTemp);
+                Console.WriteLine("{0} TEMPERATURE: {1} °C", weather.CityName.ToUpper(), weather.Temp.CurrentTemp);
 
                 _logger.LogTrace("Attempt to save weather info to the file");
                 await _fileStorageService.SaveAsync(weather);
@@ -41,17 +40,16 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
             }
             else
             {
-                _logger.LogCritical("Weather object or one or more weather properties is null");
-                throw new ArgumentNullException(weather?.CityName, "Weather object or one or more weather properties is null");
+                _logger.LogCritical($"For the request value {City} weather response object validation has failed");
+                throw new ArgumentNullException(City, $"For the request value {City} weather response object validation has failed");
             }
 
             _logger.LogTrace(
-                $"Complete checking weather object properties: CityName - {weather?.CityName}, Temp - {weather?.Temp?.CurrentTemp}");
+                $"Complete checking weather object properties: CityName - {weather.CityName}, Temp - {weather.Temp.CurrentTemp}");
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "Weather was not received or not saved - {0}", ex.StackTrace);
-            throw;
+            _logger.LogCritical(ex, $"Weather was not received or not saved. Message - {ex.Message}, StackTrace - {ex.StackTrace} ");
         }
 
         _logger.LogInformation("End application");
