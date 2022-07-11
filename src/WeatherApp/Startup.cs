@@ -40,8 +40,8 @@ public static class Startup
                 services.AddHttpClient("WeatherApp",
                         c =>
                         {
-                            c.BaseAddress = new Uri(context.Configuration[
-                                    $"{nameof(ConnectionSettings)}:{nameof(ConnectionSettings.Url)}"]);
+                            c.BaseAddress = new Uri(context.Configuration
+                                [$"{nameof(ConnectionSettings)}:{nameof(ConnectionSettings.Url)}"]);
                         })
                     .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, retryAttempt =>
                         TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) +

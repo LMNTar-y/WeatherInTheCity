@@ -3,6 +3,8 @@ The main reason for creating this app is learning
 
 // Below will be a report of what was learned, and it will be in Russian. This file is mainly for personal usage
 
+Дополнительно поигрался с Postman, создал коллекцию реквестов и тесты к ним.
+
 Третий отчет:
 По результатам CodeReview полученны комментарии:
 - по использованию оператора условного null, даже когда уверен, что не возвращается нал объект.

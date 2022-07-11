@@ -4,6 +4,6 @@ namespace WeatherApp.Data.Models;
 
 public class ConnectionSettings
 {
-    [JsonPropertyName("url")] 
+    [JsonPropertyName("url")]
     public string? Url { get; set; }
 }
