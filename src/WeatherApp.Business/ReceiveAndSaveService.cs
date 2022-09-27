@@ -25,6 +25,18 @@ public class ReceiveAndSaveService : IReceiveAndSaveService
         _logger.LogInformation("Start application");
         try
         {
+            do
+            {
+                Console.WriteLine("Please enter the name of the city");
+                var tempCity = Console.ReadLine()?.Trim();
+                if (!string.IsNullOrWhiteSpace(tempCity))
+                {
+                    City = tempCity;
+                    break;
+                }
+            } 
+            while (true);
+
             _logger.LogTrace("Attempt to connect to weather API to get a weather object");
             var weather = await _weatherReceiverService.GetWeatherAsync(City);
             _logger.LogTrace("The weather object was received");
